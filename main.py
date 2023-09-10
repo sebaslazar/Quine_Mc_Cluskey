@@ -100,10 +100,12 @@ def aparear(tabla_ordenada, cantidad_maxima_unos, no_apareos_backup, backup_tabl
     contador = -1
     total_de_divisores = 0
     verificador_de_apareo = False
+
     # Recorremos los minterms ordenados en busca de apareamientos
     for minterm in tabla_ordenada.keys():
         if "-" in minterm:
             total_de_divisores = total_de_divisores + 1
+
     for minterm, minterm_binario in tabla_ordenada.items():
         identificador = False
         verificador_de_no_apareo = True
@@ -139,6 +141,7 @@ def aparear(tabla_ordenada, cantidad_maxima_unos, no_apareos_backup, backup_tabl
                     nueva_tabla[str(contador)] = str(contador)
                 contador_divisores += 1
                 contador -= 1
+
     if verificador_de_apareo:
         nueva_tabla = corregidor_de_tabla(nueva_tabla)  # Corregir tabla de negativos
         for minterm_apareado, binario_apareado in apareado.items():
@@ -154,10 +157,10 @@ def aparear(tabla_ordenada, cantidad_maxima_unos, no_apareos_backup, backup_tabl
                 combinaciones = tuple(sorted(implicante.split(", ")))  # Convertir a tupla ordenada
                 if combinaciones not in combinaciones_impresas:
                     no_apareados[implicante] = binario
-                    binario_str = ' '.join(binario)  # Convert binario list to string
-                    implicante_str = ', '.join(implicante.split(", "))  # Separar por coma y espacio
+                    binario_str = ' '.join(binario).replace("-", "0")  # Mantener ceros a la izquierda
+                    implicante_str = ', '.join(implicante.split(", "))
                     print("{:<14}   {:<19}".format(implicante_str, binario_str))
-                    combinaciones_impresas.add(combinaciones)  # Agregar combinación al conjunto
+                    combinaciones_impresas.add(combinaciones)
         print("+--------------+---------------------+")
         aparear(nueva_tabla, contador_divisores, no_apareados, nueva_tabla, minterms, no_apareados_global, apareados)
     else:
@@ -371,12 +374,14 @@ def ecuacion_mccluskey(ecuacion_final):
         if expresion_termino:
             expresion_simplificada.append(''.join(expresion_termino))
 
-    # Unir todos los términos en la expresión final
-    expresion_final = ' + '.join(expresion_simplificada)
+    if not expresion_simplificada:
+        return "1"
+    else:
+        # Unir todos los términos en la expresión final
+        expresion_final = ' + '.join(expresion_simplificada)
+        return expresion_final
 
-    return expresion_final
 
 
 print("Bienvenido al Simplificador de Expresiones usando Quine-McCluskey")
 obtener_minterms()
-
